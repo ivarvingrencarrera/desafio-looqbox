@@ -1,0 +1,69 @@
+[project]
+name = "Looqbox Data Challenge"
+version = "0.1.0"
+description = "Looqbox Data Challenge"
+authors = [
+    {name = "Ivar Carrera", email = "ivar.carrera@gmail.com"},
+]
+
+dependencies = [
+    "aiomysql>=0.2.0",
+    "fastapi>=0.116.1",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "sqlalchemy>=2.0.41",
+    "uvicorn>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.0",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.12.4",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = ["method-assign"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::SyntaxWarning",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["B008", "COM812", "D", "FBT001", "INP001", "TC001", "TC002", "TC003", "TC006",]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401",]
+"tests/**" =  ["S", "PLR2004"]
+
+[tool.ruff.lint.pylint]
+max-args = 10
+
+
+
+
