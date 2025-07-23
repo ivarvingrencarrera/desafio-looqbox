@@ -3,7 +3,7 @@ from src.repositories import ProductRepository, StoreRepository
 from src.schemas import (
     ProductInputSchema,
     ProductOutputSchema,
-    ProductSalesByStoreInputSchema,
+    ProductSalesInputSchema,
     ProductSalesOutputSchema,
 )
 
@@ -28,7 +28,7 @@ class ProductUseCase:
         return [ProductOutputSchema.from_entity(product) for product in products]
 
     async def find_product_sales(
-        self, product_id: int, input_data: ProductSalesByStoreInputSchema
+        self, product_id: int, input_data: ProductSalesInputSchema
     ) -> ProductSalesOutputSchema:
         product = await self.product_repository.find(product_id=product_id)
         if not product:

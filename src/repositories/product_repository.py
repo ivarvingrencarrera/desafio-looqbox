@@ -6,7 +6,7 @@ from sqlalchemy.sql.functions import func
 from src.entities import Product
 from src.enums import ProductSortByEnum, ProductSortOrderEnum
 from src.models import ProductModel, ProductSaleModel
-from src.value_objects import ProductSale
+from src.value_objects import Sale
 
 
 class ProductRepository:
@@ -40,7 +40,7 @@ class ProductRepository:
 
     async def find_product_sales(
         self, product_id: int, start_date: str, end_date: str, store_id: int | None = None
-    ) -> list[ProductSale]:
+    ) -> list[Sale]:
         query = (
             select(
                 ProductSaleModel.DATE,
@@ -55,11 +55,10 @@ class ProductRepository:
             .group_by(ProductSaleModel.DATE)
             .order_by(ProductSaleModel.DATE)
         )
-
         result = await self.session.execute(query)
         product_sales = result.all()
         return [
-            ProductSale(
+            Sale(
                 value=product_sale.total_value,
                 quantity=product_sale.total_quantity,
                 date=product_sale.DATE,

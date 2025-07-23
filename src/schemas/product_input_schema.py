@@ -11,7 +11,7 @@ class ProductInputSchema(BaseModel):
     limit: int = Field(default=10, gt=0, le=100)
 
 
-class ProductSalesByStoreInputSchema(BaseModel):
+class ProductSalesInputSchema(BaseModel):
     start_date: str = Field(examples=['2023-01-01'])
     end_date: str = Field(examples=['2023-12-31'])
     store_id: int | None = Field(default=None, examples=[1])

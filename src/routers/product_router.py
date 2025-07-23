@@ -7,7 +7,7 @@ from starlette import status
 from src.schemas import (
     ProductInputSchema,
     ProductOutputSchema,
-    ProductSalesByStoreInputSchema,
+    ProductSalesInputSchema,
     ProductSalesOutputSchema,
 )
 from src.use_cases import ProductUseCase, product_usecase
@@ -35,6 +35,6 @@ async def get_product(
 async def get_product_sales(
     product_id: int,
     usecase: Annotated[ProductUseCase, Depends(product_usecase)],
-    input_data: ProductSalesByStoreInputSchema = Depends(),
+    input_data: ProductSalesInputSchema = Depends(),
 ) -> ProductSalesOutputSchema:
     return await usecase.find_product_sales(product_id=product_id, input_data=input_data)

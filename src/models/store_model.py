@@ -17,9 +17,9 @@ class StoreModel(Base):
 
     def to_entity(self) -> Store:
         return Store(
-            store_id=self.STORE_CODE,
-            store_name=self.STORE_NAME,
-            store_business=Business(
+            id=self.STORE_CODE,
+            name=self.STORE_NAME,
+            business=Business(
                 business_id=self.BUSINESS_CODE,
                 business_name=self.BUSINESS_NAME,
             ),

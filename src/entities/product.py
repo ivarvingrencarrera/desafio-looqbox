@@ -1,5 +1,5 @@
 from src.exceptions import ValueNotDefined
-from src.value_objects import ProductSale
+from src.value_objects import Sale
 
 from .department import Department
 from .section import Section
@@ -13,7 +13,7 @@ class Product:
         price: float,
         department: Department,
         section: Section,
-        sales: list[ProductSale] | None = None,
+        sales: list[Sale] | None = None,
     ) -> None:
         self._id = id
         self._name = name
@@ -51,13 +51,13 @@ class Product:
         return self._section.name
 
     @property
-    def sales(self) -> list[ProductSale]:
+    def sales(self) -> list[Sale]:
         if self._sales is None:
             raise ValueNotDefined(value='sales', entity='Product')
         return self._sales
 
     @sales.setter
-    def sales(self, sales: list[ProductSale]) -> None:
+    def sales(self, sales: list[Sale]) -> None:
         self._sales = sales
 
     def __repr__(self) -> str:

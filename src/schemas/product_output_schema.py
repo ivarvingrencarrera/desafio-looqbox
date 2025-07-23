@@ -38,9 +38,9 @@ class ProductOutputSchema(ProductOutputBaseSchema):
 
 
 class SalesOutputSchema(BaseModel):
-    sales_value: Decimal = Field(examples=[74199.00])
-    sales_quantity: int = Field(examples=[100])
     date: str = Field(examples=['2024-01-01'])
+    value: Decimal = Field(examples=[74199.00])
+    quantity: int = Field(examples=[100])
 
 
 class ProductSalesOutputSchema(ProductOutputBaseSchema):
@@ -53,8 +53,8 @@ class ProductSalesOutputSchema(ProductOutputBaseSchema):
             name=product.name,
             sales=[
                 SalesOutputSchema(
-                    sales_value=sale.value,
-                    sales_quantity=sale.quantity,
+                    value=sale.value,
+                    quantity=sale.quantity,
                     date=sale.date.isoformat(),
                 )
                 for sale in product.sales

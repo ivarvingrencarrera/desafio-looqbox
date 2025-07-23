@@ -4,7 +4,7 @@ from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
 from starlette import status
 
-from src.schemas import StoreOutputSchema
+from src.schemas import StoreOutputSchema, StoreSalesInputSchema, StoreSalesOutputSchema
 from src.use_cases import StoreUseCase, store_usecase
 
 router = APIRouter(prefix='/stores', tags=['Store'])
@@ -23,3 +23,12 @@ async def get_store(
     usecase: Annotated[StoreUseCase, Depends(store_usecase)],
 ) -> StoreOutputSchema:
     return await usecase.find_store(store_id)
+
+
+@router.get('/{store_id}/sales', status_code=status.HTTP_200_OK)
+async def get_store_sales(
+    store_id: int,
+    usecase: Annotated[StoreUseCase, Depends(store_usecase)],
+    input_data: StoreSalesInputSchema = Depends(),
+) -> StoreSalesOutputSchema:
+    return await usecase.find_store_sales(store_id=store_id, input_data=input_data)

@@ -1,1 +1,1 @@
-from .product_sale import ProductSale
+from .sale import Sale
