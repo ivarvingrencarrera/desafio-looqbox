@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import cast
-
 from pydantic import BaseModel, Field
 
 from src.entities import Section
@@ -29,6 +27,6 @@ class SectionDepartmentOutputSchema(SectionOutputBaseSchema):
             id=section.id,
             name=section.name,
             department=DepartmentOutputBaseSchema(
-                id=cast(int, section.department_id), name=cast(str, section.department_name)
+                id=section.department_id, name=section.department_name
             ),
         )

@@ -1,3 +1,6 @@
+from src.exceptions import ValueNotDefined
+
+
 class Business:
     def __init__(
         self, business_id: int, business_name: str, business_total_sales: float | None = None
@@ -15,7 +18,9 @@ class Business:
         return self._business_name
 
     @property
-    def total_sales(self) -> float | None:
+    def total_sales(self) -> float:
+        if self._business_total_sales is None:
+            raise ValueNotDefined(value='total_sales', entity='business')
         return self._business_total_sales
 
     def __repr__(self) -> str:

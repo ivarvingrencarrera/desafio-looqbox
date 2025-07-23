@@ -1,4 +1,5 @@
 from src.entities import Department
+from src.exceptions import ValueNotDefined
 
 
 class Section:
@@ -18,12 +19,16 @@ class Section:
         return self._section_name
 
     @property
-    def department_id(self) -> int | None:
-        return self._department.id if self._department else None
+    def department_id(self) -> int:
+        if self._department is None:
+            raise ValueNotDefined(value='department', entity='section')
+        return self._department.id
 
     @property
-    def department_name(self) -> str | None:
-        return self._department.name if self._department else None
+    def department_name(self) -> str:
+        if self._department is None:
+            raise ValueNotDefined(value='department', entity='section')
+        return self._department.name
 
     def __repr__(self) -> str:
         return f'Section(id={self.id}, name={self.name})'

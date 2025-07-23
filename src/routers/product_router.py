@@ -4,7 +4,12 @@ from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
 from starlette import status
 
-from src.schemas import ProductInputSchema, ProductOutputSchema
+from src.schemas import (
+    ProductInputSchema,
+    ProductOutputSchema,
+    ProductSalesByStoreInputSchema,
+    ProductSalesOutputSchema,
+)
 from src.use_cases import ProductUseCase, product_usecase
 
 router = APIRouter(prefix='/products', tags=['Product'])
@@ -24,3 +29,12 @@ async def get_product(
     usecase: Annotated[ProductUseCase, Depends(product_usecase)],
 ) -> ProductOutputSchema:
     return await usecase.find_product(product_id)
+
+
+@router.get('/{product_id}/sales', status_code=status.HTTP_200_OK)
+async def get_product_sales(
+    product_id: int,
+    usecase: Annotated[ProductUseCase, Depends(product_usecase)],
+    input_data: ProductSalesByStoreInputSchema = Depends(),
+) -> ProductSalesOutputSchema:
+    return await usecase.find_product_sales(product_id=product_id, input_data=input_data)

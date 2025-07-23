@@ -1,3 +1,6 @@
+from src.exceptions import ValueNotDefined
+from src.value_objects import ProductSale
+
 from .department import Department
 from .section import Section
 
@@ -5,45 +8,57 @@ from .section import Section
 class Product:
     def __init__(
         self,
-        product_id: int,
-        product_name: str,
-        product_price: float,
-        product_department: Department,
-        product_section: Section,
+        id: int,
+        name: str,
+        price: float,
+        department: Department,
+        section: Section,
+        sales: list[ProductSale] | None = None,
     ) -> None:
-        self._product_id = product_id
-        self._product_name = product_name
-        self._product_price = product_price
-        self._product_department = product_department
-        self._product_section = product_section
+        self._id = id
+        self._name = name
+        self._price = price
+        self._department = department
+        self._section = section
+        self._sales = sales
 
     @property
     def id(self) -> int:
-        return self._product_id
+        return self._id
 
     @property
     def name(self) -> str:
-        return self._product_name
+        return self._name
 
     @property
     def price(self) -> float:
-        return self._product_price
+        return self._price
 
     @property
     def department_id(self) -> int:
-        return self._product_department.id
+        return self._department.id
 
     @property
     def department_name(self) -> str:
-        return self._product_department.name
+        return self._department.name
 
     @property
     def section_id(self) -> int:
-        return self._product_section.id
+        return self._section.id
 
     @property
     def section_name(self) -> str:
-        return self._product_section.name
+        return self._section.name
+
+    @property
+    def sales(self) -> list[ProductSale]:
+        if self._sales is None:
+            raise ValueNotDefined(value='sales', entity='Product')
+        return self._sales
+
+    @sales.setter
+    def sales(self, sales: list[ProductSale]) -> None:
+        self._sales = sales
 
     def __repr__(self) -> str:
         return f'Product(id={self.id}, name={self.name}, price={self.price}'

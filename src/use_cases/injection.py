@@ -19,7 +19,8 @@ from .store_use_case import StoreUseCase
 
 def product_usecase(session: AsyncSession = Depends(get_session)) -> ProductUseCase:
     product_repository = ProductRepository(session)
-    return ProductUseCase(product_repository)
+    store_repository = StoreRepository(session)
+    return ProductUseCase(product_repository, store_repository)
 
 
 def section_usecase(session: AsyncSession = Depends(get_session)) -> SectionUseCase:

@@ -3,3 +3,4 @@ from .department_not_found import DepartmentNotFoundError
 from .product_not_found import ProductNotFoundError
 from .section_not_found import SectionNotFoundError
 from .store_not_found import StoreNotFoundError
+from .value_not_defined import ValueNotDefined

@@ -18,11 +18,9 @@ class ProductModel(Base):
 
     def to_entity(self) -> Product:
         return Product(
-            product_id=self.PRODUCT_COD,
-            product_name=self.PRODUCT_NAME,
-            product_price=self.PRODUCT_VAL,
-            product_department=Department(
-                department_id=self.DEP_COD, department_name=self.DEP_NAME
-            ),
-            product_section=Section(section_id=self.SECTION_COD, section_name=self.SECTION_NAME),
+            id=self.PRODUCT_COD,
+            name=self.PRODUCT_NAME,
+            price=self.PRODUCT_VAL,
+            department=Department(department_id=self.DEP_COD, department_name=self.DEP_NAME),
+            section=Section(section_id=self.SECTION_COD, section_name=self.SECTION_NAME),
         )

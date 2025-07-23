@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import cast
-
 from pydantic import BaseModel, Field
 
 from src.entities import Business
@@ -26,5 +24,5 @@ class BusinessTotalSalesOutputSchema(BusinessOutputBaseSchema):
         return BusinessTotalSalesOutputSchema(
             id=business.id,
             name=business.name,
-            total_sales=cast(float, business.total_sales),
+            total_sales=business.total_sales,
         )
