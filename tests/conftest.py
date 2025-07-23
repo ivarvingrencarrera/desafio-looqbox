@@ -18,7 +18,7 @@ from src.use_cases import (
     SectionUseCase,
     StoreUseCase,
 )
-from src.value_objects import ProductSale
+from src.value_objects import Sale
 
 
 @pytest.fixture
@@ -76,13 +76,21 @@ def product_use_case(
 
 
 @pytest.fixture
+def sales() -> list[Sale]:
+    return [
+        Sale(date=date(2023, 1, 1), quantity=10, value=Decimal('5.99')),
+        Sale(date=date(2023, 1, 2), quantity=5, value=Decimal('5.99')),
+    ]
+
+
+@pytest.fixture
 def business() -> Business:
     return Business(business_id=1, business_name='Varejo', business_total_sales=123456.78)
 
 
 @pytest.fixture
-def store(business: Business) -> Store:
-    return Store(store_id=1, store_name='Sao Paulo', store_business=business)
+def store(business: Business, sales: list[Sale]) -> Store:
+    return Store(id=1, name='Sao Paulo', business=business, sales=sales)
 
 
 @pytest.fixture
@@ -96,20 +104,12 @@ def section(department: Department) -> Section:
 
 
 @pytest.fixture
-def product_sales() -> list[ProductSale]:
-    return [
-        ProductSale(date=date(2023, 1, 1), quantity=10, value=Decimal('5.99')),
-        ProductSale(date=date(2023, 1, 2), quantity=5, value=Decimal('5.99')),
-    ]
-
-
-@pytest.fixture
-def product(section: Section, department: Department, product_sales: list[ProductSale]) -> Product:
+def product(section: Section, department: Department, sales: list[Sale]) -> Product:
     return Product(
         id=10,
         name='Cerveja',
         price=5.99,
         department=department,
         section=section,
-        sales=product_sales,
+        sales=sales,
     )

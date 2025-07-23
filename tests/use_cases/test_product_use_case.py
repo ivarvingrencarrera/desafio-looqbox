@@ -9,7 +9,7 @@ from src.repositories import ProductRepository, StoreRepository
 from src.schemas import (
     ProductInputSchema,
     ProductOutputSchema,
-    ProductSalesByStoreInputSchema,
+    ProductSalesInputSchema,
     ProductSalesOutputSchema,
 )
 from src.use_cases import ProductUseCase
@@ -54,7 +54,7 @@ async def test_find_products_sales(
 ) -> None:
     product_repository.find = AsyncMock(return_value=product)
     product_repository.find_product_sales = AsyncMock(return_value=product.sales)
-    input_data = ProductSalesByStoreInputSchema(
+    input_data = ProductSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
     )
@@ -72,7 +72,7 @@ async def test_find_product_sales_with_store(
     product_repository.find = AsyncMock(return_value=product)
     product_repository.find_product_sales = AsyncMock(return_value=product.sales)
     store_repository.find = AsyncMock(return_value=store)
-    input_data = ProductSalesByStoreInputSchema(
+    input_data = ProductSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
         store_id=store.id,
@@ -89,7 +89,7 @@ async def test_find_product_sales_store_not_found(
 ) -> None:
     product_repository.find = AsyncMock(return_value=product)
     store_repository.find = AsyncMock(return_value=None)
-    input_data = ProductSalesByStoreInputSchema(
+    input_data = ProductSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
         store_id=999,
@@ -104,7 +104,7 @@ async def test_find_product_sales_product_not_found(
     product_repository: ProductRepository,
 ) -> None:
     product_repository.find = AsyncMock(return_value=None)
-    input_data = ProductSalesByStoreInputSchema(
+    input_data = ProductSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
     )
