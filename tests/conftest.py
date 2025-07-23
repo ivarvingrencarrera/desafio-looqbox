@@ -1,3 +1,6 @@
+from datetime import date
+from decimal import Decimal
+
 import pytest
 
 from src.entities import Business, Department, Product, Section, Store
@@ -15,6 +18,7 @@ from src.use_cases import (
     SectionUseCase,
     StoreUseCase,
 )
+from src.value_objects import ProductSale
 
 
 @pytest.fixture
@@ -65,8 +69,10 @@ def section_use_case(
 
 
 @pytest.fixture
-def product_use_case(product_repository: ProductRepository) -> ProductUseCase:
-    return ProductUseCase(product_repository)
+def product_use_case(
+    product_repository: ProductRepository, store_repository: StoreRepository
+) -> ProductUseCase:
+    return ProductUseCase(product_repository, store_repository)
 
 
 @pytest.fixture
@@ -90,11 +96,20 @@ def section(department: Department) -> Section:
 
 
 @pytest.fixture
-def product(section: Section, department: Department) -> Product:
+def product_sales() -> list[ProductSale]:
+    return [
+        ProductSale(date=date(2023, 1, 1), quantity=10, value=Decimal('5.99')),
+        ProductSale(date=date(2023, 1, 2), quantity=5, value=Decimal('5.99')),
+    ]
+
+
+@pytest.fixture
+def product(section: Section, department: Department, product_sales: list[ProductSale]) -> Product:
     return Product(
-        product_id=10,
-        product_name='Cerveja',
-        product_price=5.99,
-        product_department=department,
-        product_section=section,
+        id=10,
+        name='Cerveja',
+        price=5.99,
+        department=department,
+        section=section,
+        sales=product_sales,
     )
