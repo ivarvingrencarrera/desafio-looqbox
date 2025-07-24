@@ -18,7 +18,7 @@ from src.use_cases import (
     SectionUseCase,
     StoreUseCase,
 )
-from src.value_objects import Sale
+from src.value_objects import DateTime, Sale
 
 
 @pytest.fixture
@@ -78,14 +78,14 @@ def product_use_case(
 @pytest.fixture
 def sales() -> list[Sale]:
     return [
-        Sale(date=date(2023, 1, 1), quantity=10, value=Decimal('5.99')),
-        Sale(date=date(2023, 1, 2), quantity=5, value=Decimal('5.99')),
+        Sale(date=DateTime(date(2023, 1, 1)), quantity=10, value=Decimal('5.99')),
+        Sale(date=DateTime(date(2023, 1, 2)), quantity=5, value=Decimal('5.99')),
     ]
 
 
 @pytest.fixture
 def business() -> Business:
-    return Business(business_id=1, business_name='Varejo', business_total_sales=123456.78)
+    return Business(id=1, name='Varejo', total_sales=123456.78)
 
 
 @pytest.fixture

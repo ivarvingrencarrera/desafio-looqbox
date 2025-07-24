@@ -3,9 +3,15 @@ from unittest.mock import AsyncMock
 import pytest
 
 from src.entities import Store
+from src.enums import CalculationType, GroupByPeriodEnum
 from src.exceptions import StoreNotFoundError
 from src.repositories import StoreRepository
-from src.schemas import StoreOutputSchema, StoreSalesInputSchema, StoreSalesOutputSchema
+from src.schemas import (
+    StoreOutputSchema,
+    StoreSalesOutputSchema,
+    StoresSalesInputSchema,
+    StoresSalesOutputSchema,
+)
 from src.use_cases import StoreUseCase
 
 
@@ -38,30 +44,57 @@ async def test_find_stores(
     assert output == [StoreOutputSchema.from_entity(store)]
 
 
-async def test_find_stores_sales(
+@pytest.mark.parametrize(
+    'group_by',
+    [
+        GroupByPeriodEnum.DAILY,
+        GroupByPeriodEnum.WEEKLY,
+        GroupByPeriodEnum.MONTHLY,
+        GroupByPeriodEnum.YEARLY,
+        GroupByPeriodEnum.TOTAL,
+    ],
+)
+async def test_find_stores_sales_average(
     store: Store,
     store_use_case: StoreUseCase,
     store_repository: StoreRepository,
+    group_by: GroupByPeriodEnum,
 ) -> None:
-    store_repository.find = AsyncMock(return_value=store)
-    store_repository.find_store_sales = AsyncMock(return_value=store.sales)
-    input_data = StoreSalesInputSchema(
+    store_repository.find_all = AsyncMock(return_value=[store])
+    sales = {store.id: store.sales}
+    store_repository.find_sales = AsyncMock(return_value=sales)
+    calculation = CalculationType.AVERAGE
+    input_data = StoresSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
+        calculation=calculation,
+        group_by=group_by,
     )
-    output = await store_use_case.find_store_sales(store_id=store.id, input_data=input_data)
-    assert output == StoreSalesOutputSchema.from_entity(store)
+    output = await store_use_case.find_stores_sales(input_data=input_data)
+    assert output == StoresSalesOutputSchema(
+        calculation=calculation,
+        group_by=input_data.group_by,
+        start_date=input_data.start_date,
+        end_date=input_data.end_date,
+        stores=[StoreSalesOutputSchema.from_entity(store, calculation, group_by)],
+    )
 
 
-async def test_find_store_sales_store_not_found(
+async def test_find_stores_sales_no_stores(
     store_use_case: StoreUseCase,
     store_repository: StoreRepository,
 ) -> None:
-    store_repository.find = AsyncMock(return_value=None)
-    input_data = StoreSalesInputSchema(
+    store_repository.find_all = AsyncMock(return_value=[])
+    input_data = StoresSalesInputSchema(
         start_date='2023-01-01',
         end_date='2023-01-31',
+        calculation=CalculationType.TOTAL,
     )
-    with pytest.raises(StoreNotFoundError) as error:
-        await store_use_case.find_store_sales(store_id=999, input_data=input_data)
-    assert str(error.value) == StoreNotFoundError.message
+    output = await store_use_case.find_stores_sales(input_data=input_data)
+    assert output == StoresSalesOutputSchema(
+        calculation=input_data.calculation,
+        group_by=input_data.group_by,
+        start_date=input_data.start_date,
+        end_date=input_data.end_date,
+        stores=[],
+    )
