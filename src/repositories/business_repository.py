@@ -21,7 +21,7 @@ class BusinessRepository:
         try:
             result = await self.session.execute(query)
             business = result.one()
-            return Business(business_id=business[0], business_name=business[1])
+            return Business(id=business[0], name=business[1])
         except NoResultFound:
             return None
 
@@ -33,7 +33,7 @@ class BusinessRepository:
         )
         result = await self.session.execute(query)
         business = result.all()
-        return [Business(business_id=cod, business_name=name) for cod, name in business]
+        return [Business(id=cod, name=name) for cod, name in business]
 
     async def find_total_sales(self, start_date: str, end_date: str) -> list[Business]:
         query = (
@@ -50,6 +50,6 @@ class BusinessRepository:
         result = await self.session.execute(query)
         sales_data = result.all()
         return [
-            Business(business_id=cod, business_name=name, business_total_sales=sales_value)
+            Business(id=cod, name=name, total_sales=sales_value)
             for cod, name, sales_value in sales_data
         ]

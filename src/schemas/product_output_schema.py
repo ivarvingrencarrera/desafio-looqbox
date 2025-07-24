@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import cast
 
 from pydantic import BaseModel, Field
 
 from src.entities import Product
+from src.value_objects import DateTime
 
 from .department_output_schema import DepartmentOutputBaseSchema
 from .section_output_schema import SectionOutputBaseSchema
@@ -55,7 +57,7 @@ class ProductSalesOutputSchema(ProductOutputBaseSchema):
                 SalesOutputSchema(
                     value=sale.value,
                     quantity=sale.quantity,
-                    date=sale.date.isoformat(),
+                    date=cast(DateTime, sale.date).to_day(),
                 )
                 for sale in product.sales
             ],

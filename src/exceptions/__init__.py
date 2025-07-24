@@ -1,5 +1,6 @@
 from .business_not_found import BusinessNotFoundError
 from .department_not_found import DepartmentNotFoundError
+from .feature_not_available import FeatureNotAvailableError
 from .product_not_found import ProductNotFoundError
 from .section_not_found import SectionNotFoundError
 from .store_not_found import StoreNotFoundError

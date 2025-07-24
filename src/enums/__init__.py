@@ -1,1 +1,3 @@
+from .calculation_type_enum import CalculationType
+from .group_by_period_enum import GroupByPeriodEnum
 from .product_sort_by_enum import ProductSortByEnum, ProductSortOrderEnum

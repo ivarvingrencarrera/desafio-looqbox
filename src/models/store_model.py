@@ -20,7 +20,7 @@ class StoreModel(Base):
             id=self.STORE_CODE,
             name=self.STORE_NAME,
             business=Business(
-                business_id=self.BUSINESS_CODE,
-                business_name=self.BUSINESS_NAME,
+                id=self.BUSINESS_CODE,
+                name=self.BUSINESS_NAME,
             ),
         )

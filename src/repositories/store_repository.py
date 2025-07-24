@@ -1,11 +1,15 @@
+from collections import defaultdict
+
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import select
+from sqlalchemy.sql.expression import Label, literal, select
 from sqlalchemy.sql.functions import func
 
 from src.entities import Store
+from src.enums import GroupByPeriodEnum
+from src.exceptions import FeatureNotAvailableError
 from src.models import StoreModel, StoreSaleModel
-from src.value_objects import Sale
+from src.value_objects import DateTime, Sale
 
 
 class StoreRepository:
@@ -25,33 +29,77 @@ class StoreRepository:
         except NoResultFound:
             return None
 
-    async def find_all(self) -> list[Store]:
+    async def find_all(self, store_ids: list[int] | None = None) -> list[Store]:
         query = select(StoreModel).distinct().order_by(StoreModel.STORE_CODE)
+        if store_ids:
+            query = query.where(StoreModel.STORE_CODE.in_(store_ids))
         result = await self.session.execute(query)
         store_models = result.scalars().all()
         return [store_model.to_entity() for store_model in store_models]
 
-    async def find_store_sales(self, store_id: int, start_date: str, end_date: str) -> list[Sale]:
-        query = (
-            select(
-                StoreSaleModel.DATE,
-                func.sum(StoreSaleModel.SALES_VALUE).label('total_value'),
-                func.sum(StoreSaleModel.SALES_QTY).label('total_quantity'),
+    async def find_sales(
+        self,
+        store_ids: list[int],
+        start_date: str,
+        end_date: str,
+        group_by: GroupByPeriodEnum,
+    ) -> dict[int, list[Sale]]:
+        if group_by == GroupByPeriodEnum.TOTAL:
+            query = (
+                select(
+                    StoreSaleModel.STORE_CODE,
+                    func.sum(StoreSaleModel.SALES_VALUE).label('total_value'),
+                    func.sum(StoreSaleModel.SALES_QTY).label('total_quantity'),
+                )
+                .where(
+                    StoreSaleModel.STORE_CODE.in_(store_ids),
+                    StoreSaleModel.DATE.between(start_date, end_date),
+                )
+                .group_by(StoreSaleModel.STORE_CODE)
+                .order_by(StoreSaleModel.STORE_CODE)
             )
-            .where(
-                store_id == StoreSaleModel.STORE_CODE,  # type: ignore[arg-type]
-                StoreSaleModel.DATE.between(start_date, end_date),
+        else:
+            period_expr = self.build_period_expr(group_by)
+            query = (
+                select(
+                    StoreSaleModel.STORE_CODE,
+                    period_expr,
+                    func.sum(StoreSaleModel.SALES_VALUE).label('total_value'),
+                    func.sum(StoreSaleModel.SALES_QTY).label('total_quantity'),
+                )
+                .where(
+                    StoreSaleModel.STORE_CODE.in_(store_ids),
+                    StoreSaleModel.DATE.between(start_date, end_date),
+                )
+                .group_by(StoreSaleModel.STORE_CODE, period_expr)
+                .order_by(StoreSaleModel.STORE_CODE)
             )
-            .group_by(StoreSaleModel.DATE)
-            .order_by(StoreSaleModel.DATE)
-        )
         result = await self.session.execute(query)
         store_sales = result.all()
-        return [
-            Sale(
-                value=store_sale.total_value,
-                quantity=store_sale.total_quantity,
-                date=store_sale.DATE,
+        store_sales_dict: dict[int, list[Sale]] = defaultdict(list)
+        for row in store_sales:
+            store_sales_dict[row.STORE_CODE].append(
+                Sale(
+                    value=row.total_value,
+                    quantity=int(row.total_quantity),
+                    date=DateTime(row.period) if group_by != GroupByPeriodEnum.TOTAL else None,
+                )
             )
-            for store_sale in store_sales
-        ]
+        return dict(store_sales_dict)
+
+    @staticmethod
+    def build_period_expr(group_by: GroupByPeriodEnum) -> Label:
+        match group_by:
+            case GroupByPeriodEnum.DAILY:
+                return func.date(StoreSaleModel.DATE).label('period')
+            case GroupByPeriodEnum.WEEKLY:
+                return func.concat(
+                    func.year(StoreSaleModel.DATE),
+                    literal('-W'),
+                    func.lpad(func.week(StoreSaleModel.DATE, 3), 2, '0'),  # modo 3 = ISO 8601
+                ).label('period')
+            case GroupByPeriodEnum.MONTHLY:
+                return func.date_format(StoreSaleModel.DATE, '%Y-%m-01').label('period')
+            case GroupByPeriodEnum.YEARLY:
+                return func.date_format(StoreSaleModel.DATE, '%Y-01-01').label('period')
+        raise FeatureNotAvailableError
