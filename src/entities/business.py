@@ -1,11 +1,15 @@
 from src.exceptions import ValueNotDefined
+from src.value_objects import Sale
 
 
 class Business:
-    def __init__(self, id: int, name: str, total_sales: float | None = None) -> None:
+    def __init__(
+        self,
+        id: int,
+        name: str,
+    ) -> None:
         self._id = id
         self._name = name
-        self._total_sales = total_sales
 
     @property
     def id(self) -> int:
@@ -16,10 +20,14 @@ class Business:
         return self._name
 
     @property
-    def total_sales(self) -> float:
-        if self._total_sales is None:
-            raise ValueNotDefined(value='total_sales', entity='business')
-        return self._total_sales
+    def sales(self) -> list[Sale]:
+        if self._sales is None:
+            raise ValueNotDefined(value='sales', entity='Store')
+        return self._sales
+
+    @sales.setter
+    def sales(self, sales: list[Sale]) -> None:
+        self._sales = sales
 
     def __repr__(self) -> str:
         return f'Business(id={self.id}, name={self.name})'

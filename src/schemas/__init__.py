@@ -1,8 +1,9 @@
-from .business_input_schema import BusinessTotalSalesInputSchema
+from .business_input_schema import BusinessesSalesInputSchema
 from .business_output_schema import (
+    BusinessesSalesOutputSchema,
     BusinessOutputBaseSchema,
     BusinessOutputSchema,
-    BusinessTotalSalesOutputSchema,
+    BusinessSalesOutputSchema,
 )
 from .department_output_schema import DepartmentOutputBaseSchema, DepartmentOutputSchema
 from .product_input_schema import ProductInputSchema, ProductSalesInputSchema

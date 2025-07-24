@@ -5,9 +5,9 @@ from fastapi.routing import APIRouter
 from starlette import status
 
 from src.schemas import (
+    BusinessesSalesInputSchema,
+    BusinessesSalesOutputSchema,
     BusinessOutputSchema,
-    BusinessTotalSalesInputSchema,
-    BusinessTotalSalesOutputSchema,
 )
 from src.use_cases import BusinessUseCase, business_usecase
 
@@ -29,9 +29,9 @@ async def get_business(
     return await usecase.find_business(business_id)
 
 
-@router.get('/total-sales', status_code=status.HTTP_200_OK)
-async def get_businesses_total_sales(
+@router.post('/sales', status_code=status.HTTP_200_OK)
+async def get_businesses_sales(
     usecase: Annotated[BusinessUseCase, Depends(business_usecase)],
-    input_data: BusinessTotalSalesInputSchema = Depends(),
-) -> list[BusinessTotalSalesOutputSchema]:
-    return await usecase.find_businesses_total_sales(input_data)
+    input_data: BusinessesSalesInputSchema,
+) -> BusinessesSalesOutputSchema:
+    return await usecase.find_businesses_sales(input_data)

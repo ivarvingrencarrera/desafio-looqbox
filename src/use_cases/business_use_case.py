@@ -1,9 +1,10 @@
 from src.exceptions import BusinessNotFoundError
 from src.repositories import BusinessRepository
 from src.schemas import (
+    BusinessesSalesInputSchema,
+    BusinessesSalesOutputSchema,
     BusinessOutputSchema,
-    BusinessTotalSalesInputSchema,
-    BusinessTotalSalesOutputSchema,
+    BusinessSalesOutputSchema,
 )
 
 
@@ -21,10 +22,32 @@ class BusinessUseCase:
         businesses = await self.business_repository.find_all()
         return [BusinessOutputSchema.from_entity(business) for business in businesses]
 
-    async def find_businesses_total_sales(
-        self, input_data: BusinessTotalSalesInputSchema
-    ) -> list[BusinessTotalSalesOutputSchema]:
-        businesses = await self.business_repository.find_total_sales(
-            start_date=input_data.start_date, end_date=input_data.end_date
+    async def find_businesses_sales(
+        self, input_data: BusinessesSalesInputSchema
+    ) -> BusinessesSalesOutputSchema:
+        businesses = await self.business_repository.find_all(business_ids=input_data.business_ids)
+        if not businesses:
+            businesses_sales = []
+        else:
+            sales = await self.business_repository.find_sales(
+                business_ids=[business.id for business in businesses],
+                start_date=input_data.start_date,
+                end_date=input_data.end_date,
+                group_by=input_data.group_by,
+            )
+            for business in businesses:
+                business.sales = sales.get(business.id, [])
+            businesses_sales = [
+                BusinessSalesOutputSchema.from_entity(
+                    business=business,
+                    group_by=input_data.group_by,
+                )
+                for business in businesses
+            ]
+        return BusinessesSalesOutputSchema(
+            calculation=input_data.calculation,
+            group_by=input_data.group_by,
+            start_date=input_data.start_date,
+            end_date=input_data.end_date,
+            businesses=businesses_sales,
         )
-        return [BusinessTotalSalesOutputSchema.from_entity(business) for business in businesses]
