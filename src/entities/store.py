@@ -10,12 +10,10 @@ class Store:
         id: int,
         name: str,
         business: Business,
-        sales: list[Sale] | None = None,
     ) -> None:
         self._id = id
         self._name = name
         self._business = business
-        self._sales = sales
 
     @property
     def id(self) -> int:

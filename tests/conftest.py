@@ -92,7 +92,9 @@ def business(sales: list[Sale]) -> Business:
 
 @pytest.fixture
 def store(business: Business, sales: list[Sale]) -> Store:
-    return Store(id=1, name='Sao Paulo', business=business, sales=sales)
+    store = Store(id=1, name='Sao Paulo', business=business)
+    store.sales = sales
+    return store
 
 
 @pytest.fixture
