@@ -13,5 +13,9 @@ test:
 	pytest --cov-report=term-missing --cov-report=html --cov-report=xml --cov-branch --cov src/
 
 
-local/start:
+local/start: check_env
 	uvicorn src.main:app --port 8008 --reload
+
+
+check_env:
+	@ if [ ! -f ".env" ]; then cp sample.env .env; fi
