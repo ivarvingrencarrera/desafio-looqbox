@@ -153,8 +153,8 @@ wheels = [
 ]
 
 [[package]]
-name = "looqbox-data-challenge"
-version = "1.0.0"
+name = "looqboxdatachallenge"
+version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiomysql" },
@@ -192,7 +192,6 @@ dev = [
     { name = "pytest-cov", specifier = ">=6.2.1" },
     { name = "ruff", specifier = ">=0.12.4" },
 ]
-pytest = []
 
 [[package]]
 name = "mypy"
