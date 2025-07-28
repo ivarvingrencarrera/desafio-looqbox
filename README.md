@@ -20,11 +20,11 @@ Siga as etapas abaixo para configurar e executar o projeto:
 2. Navegue até o diretório do projeto:
     ```cd desafio-looqbox```
 #####
-3. Crie e ative um ambiente virtual usando o uv:
-    ```source .venv/bin/activate```
-#####
-4. Instale as dependências do projeto:
+3. Instale as dependências do projeto:
     ```uv sync```
+#####
+4. Crie e ative um ambiente virtual usando o uv:
+    ```source .venv/bin/activate```
 #####
 5. Execute a aplicação:
     ```make local/start```
