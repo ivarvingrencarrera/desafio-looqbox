@@ -26,7 +26,10 @@ Siga as etapas abaixo para configurar e executar o projeto:
 4. Crie e ative um ambiente virtual usando o uv:
     ```source .venv/bin/activate```
 #####
-5. Execute a aplicação:
+5. Validar variáveis de ambiente e caso não exista, preencher os valores da env:
+    ```make check_env```
+#####
+6. Execute a aplicação:
     ```make local/start```
 #####
 
